@@ -143,23 +143,21 @@ public class Dialog_AutoMarkingRules : Window
                             fullButtonArea.size * MarkThatPawn.ButtonIconSizeFactor))
                     {
                         var editFloatMenu = new List<FloatMenuOption>();
-                        if (!autoRule.RequiresAnActiveGame || Current.ProgramState == ProgramState.Playing)
-                        {
-                            editFloatMenu.Add(new FloatMenuOption("MTP.EditAutomaticType".Translate(),
-                                () =>
-                                {
-                                    ruleWorkingCopy = autoRule.GetEditableVersion();
-                                    originalRule = autoRule;
-                                }, TexButton.OpenStatsReport, Color.white));
-                            editFloatMenu.Add(new FloatMenuOption("MTP.DuplicateRule".Translate(),
-                                () =>
-                                {
-                                    var ruleCopy = autoRule.GetCopy();
-                                    ruleCopy.RuleOrder = MarkThatPawnMod.instance.Settings.AutoRules
-                                        .OrderByDescending(rule => rule.RuleOrder).First().RuleOrder + 1;
-                                    MarkThatPawnMod.instance.Settings.AutoRules.Add(ruleCopy);
-                                }, copyIcon, Color.white));
-                        }
+
+                        editFloatMenu.Add(new FloatMenuOption("MTP.EditAutomaticType".Translate(),
+                            () =>
+                            {
+                                ruleWorkingCopy = autoRule.GetCopy();
+                                originalRule = autoRule;
+                            }, TexButton.OpenStatsReport, Color.white));
+                        editFloatMenu.Add(new FloatMenuOption("MTP.DuplicateRule".Translate(),
+                            () =>
+                            {
+                                var ruleCopy = autoRule.GetCopy();
+                                ruleCopy.RuleOrder = MarkThatPawnMod.instance.Settings.AutoRules
+                                    .OrderByDescending(rule => rule.RuleOrder).First().RuleOrder + 1;
+                                MarkThatPawnMod.instance.Settings.AutoRules.Add(ruleCopy);
+                            }, copyIcon, Color.white));
 
                         editFloatMenu.Add(new FloatMenuOption("MTP.DeleteAutomaticType".Translate(),
                             () =>
@@ -424,16 +422,10 @@ public class Dialog_AutoMarkingRules : Window
                     ruleTypeList.Add(new FloatMenuOption($"MTP.AutomaticType.{ruleType}".Translate(),
                         () => MarkThatPawnMod.instance.Settings.AutoRules.Add(new IdeologyIconMarkerRule())));
                     break;
-                case MarkerRule.AutoRuleType.TDFindLib
-                    when MarkThatPawn.TDFindLibLoaded && Current.ProgramState == ProgramState.Playing:
+                case MarkerRule.AutoRuleType.TDFindLib when MarkThatPawn.TDFindLibLoaded:
                     ruleTypeList.Add(new FloatMenuOption($"MTP.AutomaticType.{ruleType}".Translate(),
                         () => MarkThatPawnMod.instance.Settings.AutoRules.Add(
                             (MarkerRule)Activator.CreateInstance(MarkThatPawn.TDFindLibRuleType))));
-                    break;
-                case MarkerRule.AutoRuleType.TDFindLib when MarkThatPawn.TDFindLibLoaded:
-                    ruleTypeList.Add(new FloatMenuOption(
-                        $"MTP.AutomaticType.{ruleType}".Translate() + "\n" + "MTP.RequiresAnActiveGame".Translate(),
-                        () => { }));
                     break;
                 default:
                     continue;

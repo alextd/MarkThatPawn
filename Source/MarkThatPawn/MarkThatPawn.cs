@@ -143,8 +143,8 @@ public static class MarkThatPawn
         AllThrownWeapons = AllValidWeapons.Where(def =>
             def.Verbs.Any(properties => properties.defaultProjectile?.projectile?.arcHeightFactor > 0)).ToList();
 
-        Log.Message(
-            $"[MarkThatPawn]: Found {AllValidWeapons.Count} loaded weapons, {AllExplosiveRangedWeapons.Count} explosive weapons and {AllThrownWeapons.Count} thrown projectiles");
+        //Log.Message(
+        //    $"[MarkThatPawn]: Found {AllValidWeapons.Count} loaded weapons, {AllExplosiveRangedWeapons.Count} explosive weapons and {AllThrownWeapons.Count} thrown projectiles");
 
         AllValidApparels = DefDatabase<ThingDef>.AllDefsListForReading
             .Where(def => !string.IsNullOrEmpty(def.label) && def.IsApparel)
@@ -180,12 +180,12 @@ public static class MarkThatPawn
             .Except(AllEnviromentalProtectionApparel)
             .Except(AllPsycastApparel).ToList();
 
-        Log.Message(
-            $"[MarkThatPawn]: Found {AllValidApparels.Count} loaded apparel, {AllArmoredApparel.Count} armored apparel, {AllRoyalApparel.Count} royal apparel, " +
-            $"{AllPsycastApparel.Count} psycast apparel, {AllEnviromentalProtectionApparel.Count} enviromental protection apparel, " +
-            $"{AllMechanatorApparel.Count} mechanator apparel and {AllBasicApparel.Count} basic apparel ");
+        //Log.Message(
+        //    $"[MarkThatPawn]: Found {AllValidApparels.Count} loaded apparel, {AllArmoredApparel.Count} armored apparel, {AllRoyalApparel.Count} royal apparel, " +
+        //    $"{AllPsycastApparel.Count} psycast apparel, {AllEnviromentalProtectionApparel.Count} enviromental protection apparel, " +
+        //    $"{AllMechanatorApparel.Count} mechanator apparel and {AllBasicApparel.Count} basic apparel ");
 
-        TDFindLibLoaded = ModLister.GetActiveModWithIdentifier("Uuugggg.TDFindLib") != null;
+        TDFindLibLoaded = ModLister.GetActiveModWithIdentifier("Uuugggg.TDFindLib", true) != null;
         if (TDFindLibLoaded)
         {
             TDFindLibRuleType = AccessTools.TypeByName("TDFindLibRule");
@@ -293,19 +293,17 @@ public static class MarkThatPawn
 
         MultiIconOverlay = MaterialPool.MatFrom("UI/MultipleImageOverlay", ShaderDatabase.MetaOverlay);
 
-        Log.Message(
-            $"[MarkThatPawn]: Found {MarkThatPawnMod.instance.Settings.AutoRules.Count} automatic rules defined");
+        //Log.Message(
+        //    $"[MarkThatPawn]: Found {MarkThatPawnMod.instance.Settings.AutoRules.Count} automatic rules defined");
 
         VehiclesLoaded = ModLister.GetActiveModWithIdentifier("SmashPhil.VehicleFramework") != null;
-        if (!VehiclesLoaded)
+        if (VehiclesLoaded)
         {
-            return;
+            Log.Message("[MarkThatPawn]: Vehicle Framework detected, adding compatility patch");
+            var original = AccessTools.Method("Vehicles.VehicleRenderer:RenderPawnAt");
+            var postfix = typeof(VehicleRenderer_RenderPawnAt).GetMethod(nameof(VehicleRenderer_RenderPawnAt.Postfix));
+            harmony.Patch(original, postfix: new HarmonyMethod(postfix));
         }
-
-        Log.Message("[MarkThatPawn]: Vehicle Framework detected, adding compatility patch");
-        var original = AccessTools.Method("Vehicles.VehicleRenderer:RenderPawnAt");
-        var postfix = typeof(VehicleRenderer_RenderPawnAt).GetMethod(nameof(VehicleRenderer_RenderPawnAt.Postfix));
-        harmony.Patch(original, postfix: new HarmonyMethod(postfix));
     }
 
     public static void RenderMarkingOverlay(Pawn pawn, MarkingTracker tracker)

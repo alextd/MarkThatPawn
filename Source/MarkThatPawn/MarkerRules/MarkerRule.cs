@@ -46,7 +46,6 @@ public abstract class MarkerRule
     public MarkerDef MarkerDef;
     public int MarkerIndex;
     public PawnType PawnLimitation;
-    public bool RequiresAnActiveGame;
     public int RuleOrder;
     protected string RuleParameters;
     protected AutoRuleType RuleType;
@@ -106,12 +105,7 @@ public abstract class MarkerRule
 
     public abstract MarkerRule GetCopy();
 
-    public virtual MarkerRule GetEditableVersion()
-    {
-        return GetCopy();
-    }
-
-    public void SaveFromCopy(MarkerRule copy)
+    public virtual void SaveFromCopy(MarkerRule copy)
     {
         SetBlob(copy.GetBlob());
     }

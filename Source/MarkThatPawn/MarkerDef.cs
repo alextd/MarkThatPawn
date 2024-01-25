@@ -108,7 +108,7 @@ public class MarkerDef : Def
 
         if (MarkerTextures.Any())
         {
-            Log.Message($"[MarkThatPawn]: Found {MarkerTextures.Count} icons for {LabelCap}");
+            //Log.Message($"[MarkThatPawn]: Found {MarkerTextures.Count} icons for {LabelCap}");
         }
     }
 }
