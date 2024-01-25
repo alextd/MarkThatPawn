@@ -26,11 +26,6 @@ public class MarkThatPawnMod : Mod
     public MarkThatPawnMod(ModContentPack content) : base(content)
     {
         instance = this;
-        Settings = GetSettings<MarkThatPawnSettings>();
-        if (Settings.AutoRules == null)
-        {
-            Settings.AutoRules = [];
-        }
 
         currentVersion = VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
     }
@@ -38,7 +33,7 @@ public class MarkThatPawnMod : Mod
     /// <summary>
     ///     The instance-settings for the mod
     /// </summary>
-    public MarkThatPawnSettings Settings { get; }
+    public MarkThatPawnSettings Settings { get; set; }
 
     /// <summary>
     ///     The title for the mod-settings

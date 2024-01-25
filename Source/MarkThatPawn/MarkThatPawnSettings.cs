@@ -195,11 +195,15 @@ public class MarkThatPawnSettings : ModSettings
         Scribe_Values.Look(ref SlaveDiffer, "SlaveDiffer");
         Scribe_Values.Look(ref EnemyDiffer, "EnemyDiffer");
         Scribe_Values.Look(ref NeutralDiffer, "NeutralDiffer");
-        // Backward compat
+
+        // Backward compat rules loading:
         if(Scribe.mode == LoadSaveMode.LoadingVars)
             Scribe_Collections.Look(ref AutoRuleBlobs, "AutoRuleBlobs");
         // From now on, expose Rules directly
         Scribe_Collections.Look(ref AutoRules, "AutoRules");
+        if (AutoRules == null)
+            AutoRules = [];
+
         Scribe_Values.Look(ref VehiclesDiffer, "VehiclesDiffer");
         Scribe_Values.Look(ref IconSize, "IconSize", 0.7f);
         Scribe_Values.Look(ref IconSpacingFactor, "IconSpacingFactor");

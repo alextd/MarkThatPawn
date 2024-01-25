@@ -197,6 +197,9 @@ public static class MarkThatPawn
             }
         }
 
+        // Load settings, now that defs are loaded.
+        MarkThatPawnMod.instance.Settings = MarkThatPawnMod.instance.GetSettings<MarkThatPawnSettings>();
+
         // Backward compat: load rules from blob strings instead of ExposeData
         foreach (var ruleBlob in MarkThatPawnMod.instance.Settings.AutoRuleBlobs ?? [])
         {
