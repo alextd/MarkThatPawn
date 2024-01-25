@@ -8,7 +8,7 @@ using static MarkThatPawn.MarkThatPawn;
 
 namespace MarkThatPawn.MarkerRules;
 
-public abstract class MarkerRule
+public abstract class MarkerRule : IExposable
 {
     public enum AutoRuleType
     {
@@ -115,10 +115,11 @@ public abstract class MarkerRule
         RuleParameters = string.Empty;
         PawnLimitation = PawnType.Default;
         MarkerIndex = 0;
-        MarkerDef = MarkThatPawnMod.instance.Settings.DefaultMarkerSet;
+        MarkerDef = MarkThatPawnMod.instance.Settings?.DefaultMarkerSet
+            ?? DefDatabase<MarkerDef>.GetNamedSilentFail("WowStyle");
         Enabled = false;
         ApplicablePawnTypes = Enum.GetValues(typeof(PawnType)).Cast<PawnType>().ToList();
-        if (MarkThatPawnMod.instance.Settings.AutoRules?.Any() == true)
+        if (MarkThatPawnMod.instance.Settings?.AutoRules?.Any() == true)
         {
             RuleOrder = MarkThatPawnMod.instance.Settings.AutoRules.Max(rule => rule.RuleOrder) + 1;
         }
@@ -146,7 +147,8 @@ public abstract class MarkerRule
 
         RuleParameters = rowSplitted[1];
 
-        if (!TryGetMarkerDef(rowSplitted[2], out MarkerDef))
+        MarkerDef = DefDatabase<MarkerDef>.GetNamedSilentFail(rowSplitted[2]);
+        if (MarkerDef == null)
         {
             ErrorMessage = "Cannot parse MarkerDef";
             ConfigError = true;
@@ -333,5 +335,30 @@ public abstract class MarkerRule
         }
 
         Find.WindowStack.Add(new FloatMenu(pawnTypeList));
+    }
+
+    public virtual void ExposeData()
+    {
+        if(Scribe.mode == LoadSaveMode.Saving)
+        {
+            string blob = GetBlob();
+            Scribe_Values.Look(ref blob, "blob", "");
+        }
+        else if(Scribe.mode == LoadSaveMode.LoadingVars)
+        {
+            string blob = "";
+            Scribe_Values.Look(ref blob, "blob", "");
+            LongEventHandler.ExecuteWhenFinished(delegate ()
+            {
+                SetBlob(blob);
+
+                if (ConfigError)
+                {
+                    Log.Warning(
+                        $"Failed to load a marker-rule from blob: \n{blob}\n{ErrorMessage}\nDisabling the rule.");
+                    SetEnabled(false);
+                }
+            });
+        }
     }
 }

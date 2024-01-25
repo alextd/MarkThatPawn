@@ -27,30 +27,18 @@ public class MarkThatPawnMod : Mod
     {
         instance = this;
         Settings = GetSettings<MarkThatPawnSettings>();
-        if (Settings.AutoRuleBlobs == null)
+        if (Settings.AutoRules == null)
         {
-            Settings.AutoRuleBlobs = [];
+            Settings.AutoRules = [];
         }
 
         currentVersion = VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
-        Settings.AutoRules = [];
     }
 
     /// <summary>
     ///     The instance-settings for the mod
     /// </summary>
     public MarkThatPawnSettings Settings { get; }
-
-    public override void WriteSettings()
-    {
-        Settings.AutoRuleBlobs = [];
-        foreach (var rule in Settings.AutoRules)
-        {
-            Settings.AutoRuleBlobs.Add(rule.GetBlob());
-        }
-
-        base.WriteSettings();
-    }
 
     /// <summary>
     ///     The title for the mod-settings

@@ -197,7 +197,8 @@ public static class MarkThatPawn
             }
         }
 
-        foreach (var ruleBlob in MarkThatPawnMod.instance.Settings.AutoRuleBlobs)
+        // Backward compat: load rules from blob strings instead of ExposeData
+        foreach (var ruleBlob in MarkThatPawnMod.instance.Settings.AutoRuleBlobs ?? [])
         {
             MarkerRule rule;
             if (!MarkerRule.TryGetRuleTypeFromBlob(ruleBlob, out var type))
@@ -274,9 +275,7 @@ public static class MarkThatPawn
                 case MarkerRule.AutoRuleType.IdeologyIcon when ModLister.IdeologyInstalled:
                     rule = new IdeologyIconMarkerRule(ruleBlob);
                     break;
-                case MarkerRule.AutoRuleType.TDFindLib when TDFindLibLoaded && TDFindLibRuleType != null:
-                    rule = (MarkerRule)Activator.CreateInstance(TDFindLibRuleType, ruleBlob);
-                    break;
+                // No TDFindLib rule will be here for backward compat
                 default:
                     continue;
             }
@@ -872,18 +871,6 @@ public static class MarkThatPawn
         }
 
         return (TaggedString)$"{original.LabelCap} ({original.defName})";
-    }
-
-    public static bool TryGetMarkerDef(string markerDefName, out MarkerDef result)
-    {
-        result = null;
-        if (MarkerDefs == null || !MarkerDefs.Any())
-        {
-            return false;
-        }
-
-        result = MarkerDefs.FirstOrDefault(def => def.defName == markerDefName);
-        return result != null;
     }
 
     public static List<FloatMenuOption> GetMarkingOptions(int currentMarking, MarkingTracker tracker,
