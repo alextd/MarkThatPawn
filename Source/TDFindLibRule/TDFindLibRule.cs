@@ -70,6 +70,13 @@ public class TDFindLibRule : MarkerRule
         return tdFilter.AppliesTo(pawn, pawn.Map);
     }
 
+    public override void ExposeData()
+    {
+        base.ExposeData();
+
+        Scribe_Deep.Look(ref tdFilter, "tdFilter");
+    }
+
     public class PawnToMarkEditor : HolderEditorWindow
     {
         // ISearchReceiver stuff
