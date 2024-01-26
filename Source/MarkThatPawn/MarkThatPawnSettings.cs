@@ -203,6 +203,10 @@ public class MarkThatPawnSettings : ModSettings
         Scribe_Collections.Look(ref AutoRules, "AutoRules");
         if (AutoRules == null)
             AutoRules = [];
+        else
+        {
+            AutoRules.Remove(null);// in case TDFindLib rules loaded.
+        }
 
         Scribe_Values.Look(ref VehiclesDiffer, "VehiclesDiffer");
         Scribe_Values.Look(ref IconSize, "IconSize", 0.7f);
